@@ -1,11 +1,23 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const path = require('path');
+const getAliasesFromTsConfig = require('./aliases');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('metro-config').MetroConfig}
- */
-const config = {};
+const aliasConfig = getAliasesFromTsConfig();
+
+const extraNodeModules = {
+  ...aliasConfig,
+};
+
+const watchFolders = [
+  path.resolve(__dirname, 'src'),
+  ...Object.values(aliasConfig),
+];
+
+const config = {
+  resolver: {
+    extraNodeModules,
+  },
+  watchFolders,
+};
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
